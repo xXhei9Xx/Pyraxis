@@ -1126,37 +1126,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fb03ed5d68feae84595475250e36ffd8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  initialization: 0
-  in_new_room: 0
-  end_of_turn_effects: 0
-  current_health: 0
-  after_action: 0
-  end_turn: 0
-  room_counter: 0
-  end_of_turn_effect_counter: 0
-  armor: 0
-  minor_hemorrhage: 0
-  major_hemorrhage: 0
-  poison: 0
-  venom: 0
-  minor_frenzy: 0
-  major_frenzy: 0
-  regrowth: 0
-  minor_derangement: 0
-  major_derangement: 0
-  minor_agility: 0
-  major_agility: 0
-  minor_resistance: 0
-  major_resistance: 0
-  minor_life_steal: 0
-  major_life_steal: 0
-  minor_luck: 0
-  major_luck: 0
-  bleed_stacks: 0
-  poison_stacks: 0
-  minor_frenzy_stacks: 0
-  major_frenzy_stacks: 0
-  regrowth_stacks: 0
 --- !u!1 &397661322
 GameObject:
   m_ObjectHideFlags: 0
@@ -1186,29 +1155,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9a8361e7ffdb5994aaef5cc7e1616f47, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  card_slots_positions: []
-  room_entrance_positions: []
-  card_slots: []
-  enemies_list: []
-  floor_exit_position: 0
-  draw_phase: 0
-  planning_phase: 0
-  action_phase: 0
-  new_room: 0
-  fighting: 0
-  finished_floor: 0
-  player_turn: 0
-  picked_next_fighter: 0
-  end_of_turn_effects: 0
-  finished_end_of_turn_effect: 0
-  enemy_counter: 0
-  card_slot_counter: 0
-  end_of_turn_counter: 0
   testing_options:
     display_grid_text: 0
     player_starting_health: 20
     player_starting_damage: 1
-    time_scale: 1
+    time_scale: 2
     minor_hemorrhage_duration: 3
     major_hemorrhage_duration: 5
     poison_duration: 5
@@ -2150,7 +2101,7 @@ GameObject:
   - component: {fileID: 664495385}
   m_Layer: 2
   m_Name: Image
-  m_TagString: Untagged
+  m_TagString: card_image
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

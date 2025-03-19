@@ -212,7 +212,8 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      blue_nightOwl_0: 1738608472678356918
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

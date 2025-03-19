@@ -212,7 +212,8 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      green_pangolin_0: 8013623178919663937
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

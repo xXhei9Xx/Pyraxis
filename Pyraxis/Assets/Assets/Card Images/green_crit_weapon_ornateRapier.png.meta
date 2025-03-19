@@ -212,7 +212,8 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      green_crit_weapon_ornateRapier_0: 5099709229903699295
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

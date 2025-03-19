@@ -212,7 +212,8 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      green_bleed_bat_0: -3067706932255398691
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

@@ -6,8 +6,9 @@ using System.Collections.Generic;
 public class MapGenerator: MonoBehaviour
 {
     public void GenerateMap (GameHandler caller, int amount_of_rooms, int amount_of_card_slots, out List<float> card_slots_positions, out List<float> room_entrance_positions,
-	out List<int> room_sizes, out float floor_exit_position)
+	out List<int> room_sizes, out float floor_exit_position, out int final_amount_of_rooms)
 	{
+		final_amount_of_rooms = amount_of_rooms;
 		card_slots_positions = new List<float>();
 		room_entrance_positions = new List<float>();
 		room_sizes = new List<int>();
@@ -19,7 +20,6 @@ public class MapGenerator: MonoBehaviour
 		{
 			amount_of_card_slots = caller.gameplay_options.map.max_card_slots_per_room * amount_of_rooms;
 		}
-		Debug.Log (amount_of_rooms.ToString() + "," + amount_of_card_slots.ToString());
 		int extra_card_slots = amount_of_card_slots - amount_of_rooms;
 		int spawned_rooms = 0;
 		int spawned_card_slots = 0;

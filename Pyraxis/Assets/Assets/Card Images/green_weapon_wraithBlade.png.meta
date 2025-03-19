@@ -212,7 +212,8 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      green_weapon_wraithBlade_0: -1539709496579986584
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

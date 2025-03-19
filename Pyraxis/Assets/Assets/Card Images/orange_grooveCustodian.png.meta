@@ -212,7 +212,8 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      orange_grooveCustodian_0: 850258981041556552
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

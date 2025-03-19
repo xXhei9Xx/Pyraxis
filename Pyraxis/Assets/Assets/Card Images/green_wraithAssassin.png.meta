@@ -212,7 +212,8 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      green_wraithAssassin_0: 2876714862176473431
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

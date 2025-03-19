@@ -2,6 +2,7 @@ using TMPro;
 using UnityEngine;
 using System;
 using System.Collections.Generic;
+using UnityEngine.PlayerLoop;
 
 public class Enemy : MonoBehaviour
 {
@@ -9,55 +10,55 @@ public class Enemy : MonoBehaviour
 
 	Player player;
 	GameHandler caller;
-	public int max_health;
-	public int current_health;
-	int current_damage;
 	public int gold;
 	public int exp;
-	public bool end_turn = false;
-	public bool end_of_turn_effects = false;
+	private bool my_turn = false;
+	private int current_health;
+	private int current_damage;
+	private int max_health;
+	private bool after_action = false;
+	private bool end_turn = false;
+	private bool end_of_turn_effects = false;
 	private TextMeshProUGUI health_text;
 	private TextMeshProUGUI damage_text;
 	private TextMeshProUGUI armor_text;
 	private TextMeshProUGUI fighting_text;
 	private float action_timer = 0;
 	private float end_of_turn_timer = 0;
-	private bool after_action = false;
-	public bool my_turn = false;
-	public int end_of_turn_effect_counter = 0;
+	private int end_of_turn_effect_counter = 0;
 
 	#region creature effects
 
-	public int armor = 0;
-	public int minor_hemorrhage = 0;
-	public int major_hemorrhage = 0;
-	public int poison = 0;
-	public int venom = 0;
-	public int minor_frenzy = 0;
-	public int major_frenzy = 0;
-	public int regrowth = 0;
+	private int armor = 0;
+	private int minor_hemorrhage = 0;
+	private int major_hemorrhage = 0;
+	private int poison = 0;
+	private int venom = 0;
+	private int minor_frenzy = 0;
+	private int major_frenzy = 0;
+	private int regrowth = 0;
 
-	public bool minor_derangement = false;
-	public bool major_derangement = false;
-	public bool minor_agility = false;
-	public bool major_agility = false;
-	public bool minor_resistance = false;
-	public bool major_resistance = false;
-	public bool minor_life_steal = false;
-	public bool major_life_steal = false;
-	public bool minor_luck = false;
-	public bool major_luck = false;
+	private bool minor_derangement = false;
+	private bool major_derangement = false;
+	private bool minor_agility = false;
+	private bool major_agility = false;
+	private bool minor_resistance = false;
+	private bool major_resistance = false;
+	private bool minor_life_steal = false;
+	private bool major_life_steal = false;
+	private bool minor_luck = false;
+	private bool major_luck = false;
 
 	#endregion
 	#region end of turn effects
 
 	private List<GameHandler.EndOfTurnStackSubtraction> end_of_turn_stack_subtraction_list = new List<GameHandler.EndOfTurnStackSubtraction>();
 
-	public int bleed_stacks = 0;
-	public int poison_stacks = 0;
-	public int minor_frenzy_stacks = 0;
-	public int major_frenzy_stacks = 0;
-	public int regrowth_stacks = 0;
+	private int bleed_stacks = 0;
+	private int poison_stacks = 0;
+	private int minor_frenzy_stacks = 0;
+	private int major_frenzy_stacks = 0;
+	private int regrowth_stacks = 0;
 
 	#endregion
 
@@ -177,7 +178,7 @@ public class Enemy : MonoBehaviour
 
 	void Update()
     {
-		if (caller.fighting == true && my_turn == true && after_action == false && end_turn == false)
+		if (caller.GetFighting() == true && my_turn == true && after_action == false && end_turn == false)
 		{
 			if (minor_derangement == true)
 			{
@@ -192,7 +193,7 @@ public class Enemy : MonoBehaviour
 			action_timer = 0;
 			if (minor_hemorrhage > 0)
 			{
-				player.bleed_stacks += minor_hemorrhage;
+				player.AddBleedStacks (minor_hemorrhage);
 				if (caller.testing_options.minor_hemorrhage_duration > 0)
 				{
 					player.AddEndOfTurnStack (GameHandler.end_of_turn_stack.bleed, minor_hemorrhage, caller.testing_options.minor_hemorrhage_duration);
@@ -201,7 +202,7 @@ public class Enemy : MonoBehaviour
 			}
 			if (major_hemorrhage > 0)
 			{
-				player.bleed_stacks += major_hemorrhage;
+				player.AddBleedStacks (major_hemorrhage);
 				if (caller.testing_options.major_hemorrhage_duration > 0)
 				{
 					player.AddEndOfTurnStack (GameHandler.end_of_turn_stack.bleed, major_hemorrhage, caller.testing_options.major_hemorrhage_duration);
@@ -210,7 +211,7 @@ public class Enemy : MonoBehaviour
 			}
 			if (poison > 0)
 			{
-				player.poison_stacks += poison;
+				player.AddPoisonStacks (poison);
 				if (caller.testing_options.poison_duration > 0)
 				{
 					player.AddEndOfTurnStack (GameHandler.end_of_turn_stack.poison, poison, caller.testing_options.poison_duration);
@@ -219,7 +220,7 @@ public class Enemy : MonoBehaviour
 			}
 			if (venom > 0)
 			{
-				player.poison_stacks += venom;
+				player.AddPoisonStacks (venom);
 				if (caller.testing_options.venom_duration > 0)
 				{
 					player.AddEndOfTurnStack (GameHandler.end_of_turn_stack.poison, venom, caller.testing_options.venom_duration);
@@ -269,7 +270,7 @@ public class Enemy : MonoBehaviour
 			if (action_timer > caller.gameplay_options.ui.action_time)
 			{
 				ClearFightingText();
-				if (player.current_health > 0)
+				if (player.GetCurrentHealth() > 0)
 				{
 					player.ClearFightingText();
 					after_action = false;
@@ -290,7 +291,7 @@ public class Enemy : MonoBehaviour
 				if (end_of_turn_effect_counter > 2)
 				{
 					end_of_turn_effects = false;
-					caller.finished_end_of_turn_effect = true;
+					caller.SetFinishedEndOfTurnEffects (true);
 				}
 				switch (end_of_turn_effect_counter)
 				{
@@ -328,6 +329,11 @@ public class Enemy : MonoBehaviour
 			}
 		}
     }
+
+	public void SetMyTurn (bool state)
+	{
+		my_turn = state;
+	}
 
 	private void DealDamage ()
 	{
@@ -454,5 +460,30 @@ public class Enemy : MonoBehaviour
 	public void ClearFightingText ()
 	{
 		fighting_text.text = "";
+	}
+
+	public int GetCurrentHealth ()
+	{
+		return current_health;
+	}
+
+	public bool GetEndTurn ()
+	{
+		return end_turn;
+	}
+
+	public void SetEndTurn (bool state)
+	{
+		end_turn = state;
+	}
+
+	public void AddBleedStacks (int amount_added)
+	{
+		bleed_stacks += amount_added;
+	}
+
+	public void AddPoisonStacks (int amount_added)
+	{
+		poison_stacks += amount_added;
 	}
 }

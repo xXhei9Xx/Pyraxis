@@ -327,6 +327,7 @@ public class CardHandler : MonoBehaviour
 					timer_moving = 0;
 				}
 			}
+			//rotating into target position
 			if (rotating == true)
 			{
 				timer_rotating += Time.deltaTime * rotation_speed_multiplier / card_movement_time;
@@ -373,62 +374,65 @@ public class CardHandler : MonoBehaviour
 			{
 				transform.position = Input.mousePosition - pivot_shift;
 				//shifting card positions between each other
-				//if (transform.GetChild(0).gameObject.activeSelf == true)
-				//{
-				//	var pointerEventData = new PointerEventData (EventSystem.current) { position = Input.mousePosition};
-				//	var raycastResults = new List<RaycastResult>();
-				//	EventSystem.current.RaycastAll(pointerEventData, raycastResults);
-				//	if (raycastResults.Count > 0)
-				//	{
-				//		foreach (var result in raycastResults)
-				//		{
-				//			if (result.gameObject.tag == "card")
-				//			{
-				//				RectTransformUtility.ScreenPointToLocalPointInRectangle (result.gameObject.GetComponent<RectTransform>(), Input.mousePosition, null, out Vector2 localPoint);
-				//				if (result.gameObject.GetComponent<Card>().shifting_card == false && 
-				//				((result.gameObject.GetComponent<Card>().card_number + 1 == card_number && localPoint.x > 0) || 
-				//				(result.gameObject.GetComponent<Card>().card_number - 1 == card_number && localPoint.x < 0) ||
-				//				(result.gameObject.GetComponent<Card>().card_number - 1 > card_number) ||
-				//				(result.gameObject.GetComponent<Card>().card_number + 1 < card_number)))
-				//				{
-				//					target_rotation = result.gameObject.transform.rotation.eulerAngles;
-				//					//card to the right
-				//					if (result.gameObject.GetComponent<Card>().card_number > card_number)
-				//					{
-				//						for (int i = result.gameObject.GetComponent<Card>().card_number; i > card_number; i--)
-				//						{
-				//							if (card_handler.card_objects_list [i - 1].GetComponent<Card>().shifting_card == false)
-				//							{
-				//								card_handler.card_objects_list [i - 1].GetComponent<Card>().rotation_gap_z = - 2 * caller.gameplay_options.ui.space_between_cards;
-				//								card_handler.card_objects_list [i - 1].GetComponent<Card>().rotation_speed_multiplier = 2;
-				//								card_handler.card_objects_list [i - 1].GetComponent<Card>().rotating = true;
-				//								card_handler.card_objects_list [i - 1].GetComponent<Card>().shifting_card = true;
-				//							}
-				//						}
-				//					}
-				//					//cards to the left
-				//					else
-				//					{
-				//						for (int i = result.gameObject.GetComponent<Card>().card_number; i < card_number; i++)
-				//						{
-				//							if (card_handler.card_objects_list [i - 1].GetComponent<Card>().shifting_card == false)
-				//							{
-				//								card_handler.card_objects_list [i - 1].GetComponent<Card>().rotation_gap_z = 2 * caller.gameplay_options.ui.space_between_cards;
-				//								card_handler.card_objects_list [i - 1].GetComponent<Card>().rotation_speed_multiplier = 2;
-				//								card_handler.card_objects_list [i - 1].GetComponent<Card>().rotating = true;
-				//								card_handler.card_objects_list [i - 1].GetComponent<Card>().shifting_card = true;
-				//							}
-				//						}
-				//					}
-				//					card_handler.card_objects_list.RemoveAt (card_number - 1);
-				//					card_handler.card_objects_list.Insert (result.gameObject.GetComponent<Card>().card_number - 1, gameObject);
-				//					card_handler.RenameCards();
-				//					transform.SetSiblingIndex (card_number - 1);
-				//				}
-				//			}
-				//		}
-				//	}
-				//}
+				if (transform.GetChild(0).gameObject.activeSelf == true)
+				{
+					var pointerEventData = new PointerEventData(EventSystem.current) { position = Input.mousePosition };
+					var raycastResults = new List<RaycastResult>();
+					EventSystem.current.RaycastAll(pointerEventData, raycastResults);
+					if (raycastResults.Count > 0)
+					{
+						foreach (var result in raycastResults)
+						{
+							if (result.gameObject.tag == "card_image")
+							{
+								RectTransformUtility.ScreenPointToLocalPointInRectangle(result.gameObject.GetComponentInParent<RectTransform>(), Input.mousePosition, null, out Vector2 localPoint);
+								if (result.gameObject.GetComponentInParent<Card>().shifting_card == false &&
+								((result.gameObject.GetComponentInParent<Card>().card_number + 1 == card_number && localPoint.x > 0) ||
+								(result.gameObject.GetComponentInParent<Card>().card_number - 1 == card_number && localPoint.x < 0) ||
+								(result.gameObject.GetComponentInParent<Card>().card_number - 1 > card_number) ||
+								(result.gameObject.GetComponentInParent<Card>().card_number + 1 < card_number)))
+								{
+									Vector3 temp_target_rotation = result.gameObject.GetComponentInParent<RectTransform>().rotation.eulerAngles;
+									//card to the right
+									if (result.gameObject.GetComponentInParent<Card>().card_number > card_number)
+									{
+										for (int i = result.gameObject.GetComponentInParent<Card>().card_number; i > card_number; i--)
+										{
+											if (card_handler.card_objects_list[i - 1].GetComponent<Card>().shifting_card == false)
+											{
+												card_handler.card_objects_list[i - 1].GetComponent<Card>().rotation_gap_z = -2 * caller.gameplay_options.ui.space_between_cards;
+												card_handler.card_objects_list[i - 1].GetComponent<Card>().rotation_speed_multiplier = 2;
+												card_handler.card_objects_list[i - 1].GetComponent<Card>().rotating = true;
+												card_handler.card_objects_list[i - 1].GetComponent<Card>().shifting_card = true;
+												card_handler.card_objects_list[i - 1].GetComponent<Card>().target_rotation = card_handler.card_objects_list[i - 2].GetComponent<Card>().target_rotation;
+											}
+										}
+									}
+									//cards to the left
+									else
+									{
+										for (int i = result.gameObject.GetComponentInParent<Card>().card_number; i < card_number; i++)
+										{
+											if (card_handler.card_objects_list[i - 1].GetComponent<Card>().shifting_card == false)
+											{
+												card_handler.card_objects_list[i - 1].GetComponent<Card>().rotation_gap_z = 2 * caller.gameplay_options.ui.space_between_cards;
+												card_handler.card_objects_list[i - 1].GetComponent<Card>().rotation_speed_multiplier = 2;
+												card_handler.card_objects_list[i - 1].GetComponent<Card>().rotating = true;
+												card_handler.card_objects_list[i - 1].GetComponent<Card>().shifting_card = true;
+												card_handler.card_objects_list[i - 1].GetComponent<Card>().target_rotation = card_handler.card_objects_list[i].GetComponent<Card>().target_rotation;
+											}
+										}
+									}
+									target_rotation = temp_target_rotation;
+									card_handler.card_objects_list.RemoveAt(card_number - 1);
+									card_handler.card_objects_list.Insert(result.gameObject.GetComponentInParent<Card>().card_number - 1, gameObject);
+									card_handler.RenameCards();
+									transform.SetSiblingIndex(card_number - 1);
+								}
+							}
+						}
+					}
+				}
 				//cancel card placement
 				if (Input.GetMouseButton(caller.gameplay_options.controls.MouseButtonTranslator(caller.gameplay_options.controls.cancel)) ||
 				   !Input.GetMouseButton(caller.gameplay_options.controls.MouseButtonTranslator(caller.gameplay_options.controls.drag_card)))

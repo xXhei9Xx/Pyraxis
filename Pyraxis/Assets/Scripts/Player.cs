@@ -9,56 +9,56 @@ public class Player : MonoBehaviour
     #region variable declarations
 
 	GameHandler caller;
-	public bool initialization = false;
-	public bool in_new_room = false;
-	public bool end_of_turn_effects = false;
-	float next_room_x;
-	public int current_health;
-	int current_damage;
-	int max_health;
-	public bool after_action = false;
-	public bool end_turn = false;
+	private bool initialization = false;
+	private bool in_new_room = false;
+	private float next_room_x;
+	private int room_counter = 0;
+	private int current_health;
+	private int current_damage;
+	private int max_health;
+	private bool after_action = false;
+	private bool end_turn = false;
+	private bool end_of_turn_effects = false;
 	private TextMeshProUGUI health_text;
 	private TextMeshProUGUI damage_text;
 	private TextMeshProUGUI armor_text;
 	private TextMeshProUGUI fighting_text;
 	private float action_timer = 0;
 	private float end_of_turn_timer = 0;
-	public int room_counter = 0;
-	public int end_of_turn_effect_counter = 0;
+	private int end_of_turn_effect_counter = 0;
 
 	#region creature effects
 
-	public int armor = 0;
-	public int minor_hemorrhage = 0;
-	public int major_hemorrhage = 0;
-	public int poison = 0;
-	public int venom = 0;
-	public int minor_frenzy = 0;
-	public int major_frenzy = 0;
-	public int regrowth = 0;
+	private int armor = 0;
+	private int minor_hemorrhage = 0;
+	private int major_hemorrhage = 0;
+	private int poison = 0;
+	private int venom = 0;
+	private int minor_frenzy = 0;
+	private int major_frenzy = 0;
+	private int regrowth = 0;
 
-	public bool minor_derangement = false;
-	public bool major_derangement = false;
-	public bool minor_agility = false;
-	public bool major_agility = false;
-	public bool minor_resistance = false;
-	public bool major_resistance = false;
-	public bool minor_life_steal = false;
-	public bool major_life_steal = false;
-	public bool minor_luck = false;
-	public bool major_luck = false;
+	private bool minor_derangement = false;
+	private bool major_derangement = false;
+	private bool minor_agility = false;
+	private bool major_agility = false;
+	private bool minor_resistance = false;
+	private bool major_resistance = false;
+	private bool minor_life_steal = false;
+	private bool major_life_steal = false;
+	private bool minor_luck = false;
+	private bool major_luck = false;
 
 	#endregion
 	#region end of turn effects
 
 	private List<GameHandler.EndOfTurnStackSubtraction> end_of_turn_stack_subtraction_list = new List<GameHandler.EndOfTurnStackSubtraction>();
 
-	public int bleed_stacks = 0;
-	public int poison_stacks = 0;
-	public int minor_frenzy_stacks = 0;
-	public int major_frenzy_stacks = 0;
-	public int regrowth_stacks = 0;
+	private int bleed_stacks = 0;
+	private int poison_stacks = 0;
+	private int minor_frenzy_stacks = 0;
+	private int major_frenzy_stacks = 0;
+	private int regrowth_stacks = 0;
 
 	#endregion
 
@@ -92,41 +92,41 @@ public class Player : MonoBehaviour
 		if (initialization == false)
 		{
 			transform.position = new Vector3 (-6f, -1.25f, 0f);
-			next_room_x = caller.room_entrance_positions[0];
+			next_room_x = caller.GetRoomEntrancePosition (0);
 			initialization = true;
 			room_counter = 0;
 		}
-        if (caller.action_phase == true)
+        if (caller.GetActionPhase() == true)
 		{
-			if (in_new_room == false && caller.fighting == false)
+			if (in_new_room == false && caller.GetFighting() == false)
 			{
 				transform.position += new Vector3 (Time.deltaTime, 0f, 0f);
 				if (transform.position.x >= next_room_x + 1f)
 				{
 					transform.position = new Vector3 (next_room_x + 1f, transform.position.y, transform.position.z);
 					in_new_room = true;
-					caller.new_room = true;
+					caller.SetNewRoom (true);
 					room_counter++;
-					if (room_counter < caller.room_entrance_positions.Count)
+					if (room_counter < caller.GetAmountOfRooms())
 					{
-						next_room_x = caller.room_entrance_positions [room_counter];
+						next_room_x = caller.GetRoomEntrancePosition (room_counter);
 					}
 					else
 					{
-						next_room_x = caller.floor_exit_position;
-						if (room_counter > caller.room_entrance_positions.Count)
+						next_room_x = caller.GetFloorExitPosition();
+						if (room_counter > caller.GetAmountOfRooms())
 						{
 							in_new_room = false;
-							caller.new_room = false;
-							caller.finished_floor = true;
-							caller.action_phase = false;
+							caller.SetNewRoom (false);
+							caller.SetFinishedFloor (true);
+							caller.SetActionPhase (false);
 						}
 					}
 				}
 			}
-			if (caller.fighting == true && caller.player_turn == true && after_action == false && end_turn == false)
+			if (caller.GetFighting() == true && caller.GetPlayerTurn() == true && after_action == false && end_turn == false)
 			{
-				DealDamage (caller.enemies_list [0]);
+				DealDamage (caller.GetEnemy (0));
 				after_action = true;
 				action_timer = 0;
 			}
@@ -136,14 +136,14 @@ public class Player : MonoBehaviour
 				if (action_timer > caller.gameplay_options.ui.action_time)
 				{
 					ClearFightingText();
-					if (caller.enemies_list [0].current_health > 0)
+					if (caller.GetEnemy (0).GetCurrentHealth() > 0)
 					{
-						caller.enemies_list [0].ClearFightingText();
+						caller.GetEnemy (0).ClearFightingText();
 					}
 					else
 					{
-						Destroy (caller.enemies_list [0].gameObject);
-						caller.enemies_list.RemoveAt (0);
+						Destroy (caller.GetEnemy (0).gameObject);
+						caller.RemoveEnemy (0);
 					}
 					after_action = false;
 					end_turn = true;
@@ -158,7 +158,7 @@ public class Player : MonoBehaviour
 					if (end_of_turn_effect_counter > 2)
 					{
 						end_of_turn_effects = false;
-						caller.finished_end_of_turn_effect = true;
+						caller.SetFinishedEndOfTurnEffects (true);
 					}
 					switch (end_of_turn_effect_counter)
 					{
@@ -323,5 +323,40 @@ public class Player : MonoBehaviour
 	public void ClearFightingText ()
 	{
 		fighting_text.text = "";
+	}
+
+	public void SetInitialization (bool state)
+	{
+		initialization = state;
+	}
+
+	public void SetInNewRoom (bool state)
+	{
+		in_new_room = state;
+	}
+
+	public int GetCurrentHealth ()
+	{
+		return current_health;
+	}
+
+	public bool GetEndTurn ()
+	{
+		return end_turn;
+	}
+
+	public void SetEndTurn (bool state)
+	{
+		end_turn = state;
+	}
+
+	public void AddBleedStacks (int amount_added)
+	{
+		bleed_stacks += amount_added;
+	}
+
+	public void AddPoisonStacks (int amount_added)
+	{
+		poison_stacks += amount_added;
 	}
 }

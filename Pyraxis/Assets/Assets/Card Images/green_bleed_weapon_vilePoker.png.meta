@@ -212,7 +212,8 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      green_bleed_weapon_vilePoker_0: 9064541091845520285
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

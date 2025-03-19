@@ -17,13 +17,13 @@ public class GameHandler : MonoBehaviour
 	private (float x, float y, float z) board_center_position_tuple;
 	private GameObject game_over_text, end_turn_button, objects_attached_to_map, card_slots_object, cards_in_card_slots;
 	private Player player;
-	public List<float> card_slots_positions;
-	public List<float> room_entrance_positions;
-	public List<GameObject> card_slots;
+	private List<float> card_slots_positions;
+	private List<float> room_entrance_positions;
+	private List<GameObject> card_slots;
 	private List<int> room_sizes;
-	public List<Enemy> enemies_list = new List<Enemy>();
+	private List<Enemy> enemies_list = new List<Enemy>();
 	private camera_directions camera_direction = camera_directions.up;
-	public float floor_exit_position;
+	private float floor_exit_position;
 	private Vector3 last_camera_position;
 	#region references
 
@@ -35,25 +35,26 @@ public class GameHandler : MonoBehaviour
 	#endregion
 	#region bool
 
-	public bool draw_phase = false;
-	public bool planning_phase = false;
-	public bool action_phase = false;
-	public bool new_room = false;
-	public bool fighting = false;
-	public bool finished_floor = false;
-	public bool player_turn = false;
-	public bool picked_next_fighter = false;
-	public bool end_of_turn_effects = false;
-	public bool finished_end_of_turn_effect = false;
+	private bool draw_phase = false;
+	private bool planning_phase = false;
+	private bool action_phase = false;
+	private bool new_room = false;
+	private bool fighting = false;
+	private bool finished_floor = false;
+	private bool player_turn = false;
+	private bool picked_next_fighter = false;
+	private bool end_of_turn_effects = false;
+	private bool finished_end_of_turn_effect = false;
 
 	#endregion
 	#region int
 
+	private int amount_of_rooms = 0;
 	private int current_floor = 0;
 	private int room_counter = 0;
-	public int enemy_counter = 0;
-	public int card_slot_counter = 0;
-	public int end_of_turn_counter = 0;
+	private int enemy_counter = 0;
+	private int card_slot_counter = 0;
+	private int end_of_turn_counter = 0;
 
 	#endregion
 	#region serialized variables
@@ -321,7 +322,7 @@ public class GameHandler : MonoBehaviour
 
 		map_generator.GenerateMap (this, RandomInt (gameplay_options.map.floor_room_ranges[0].min_amount_of_rooms, gameplay_options.map.floor_room_ranges[0].max_amount_of_rooms),
 		RandomInt (gameplay_options.map.floor_room_ranges[0].min_amount_of_card_slots, gameplay_options.map.floor_room_ranges[0].max_amount_of_card_slots), out card_slots_positions,
-		out room_entrance_positions, out room_sizes, out floor_exit_position);
+		out room_entrance_positions, out room_sizes, out floor_exit_position, out amount_of_rooms);
 
 		#endregion
 		end_turn_button.SetActive (true);
@@ -371,7 +372,7 @@ public class GameHandler : MonoBehaviour
 				}
 				room_counter++;
 				new_room = false;
-				player.in_new_room = false;
+				player.SetInNewRoom (false);
 				if (enemy_counter > 0)
 				{
 					fighting = true;
@@ -380,31 +381,31 @@ public class GameHandler : MonoBehaviour
 			}
 			if (fighting == true)
 			{
-				if (player_turn == true && player.end_turn == true)
+				if (player_turn == true && player.GetEndTurn() == true)
 				{
 					player_turn = false;
 					if (enemies_list.Count > 0)
 					{
 						enemy_counter = 0;
-						enemies_list [enemy_counter].my_turn = true;
+						enemies_list [enemy_counter].SetMyTurn (true);
 					}
 					else
 					{
 						fighting = false;
 						action_phase = true;
-						player.end_turn = false;
+						player.SetEndTurn (false);
 					}
 				}
 				if (player_turn == false && enemy_counter < enemies_list.Count && end_of_turn_effects == false)
 				{
-					if (enemies_list [enemy_counter].end_turn == true)
+					if (enemies_list [enemy_counter].GetEndTurn() == true)
 					{
-						enemies_list [enemy_counter].end_turn = false;
-						enemies_list [enemy_counter].my_turn = false;
+						enemies_list [enemy_counter].SetEndTurn (false);
+						enemies_list [enemy_counter].SetMyTurn (false);
 						enemy_counter++;
 						if (enemy_counter < enemies_list.Count)
 						{
-							enemies_list [enemy_counter].my_turn = true;
+							enemies_list [enemy_counter].SetMyTurn (true);
 						}
 						else
 						{
@@ -430,7 +431,7 @@ public class GameHandler : MonoBehaviour
 						}
 						else
 						{
-							player.end_turn = false;
+							player.SetEndTurn (false);
 							player_turn = true;
 							end_of_turn_counter = 0;
 							finished_end_of_turn_effect = false;
@@ -448,8 +449,8 @@ public class GameHandler : MonoBehaviour
 			map_generator.DestroyFloor();
 			map_generator.GenerateMap (this, RandomInt (gameplay_options.map.floor_room_ranges[current_floor].min_amount_of_rooms, gameplay_options.map.floor_room_ranges[current_floor].max_amount_of_rooms),
 			RandomInt (gameplay_options.map.floor_room_ranges[current_floor].min_amount_of_card_slots, gameplay_options.map.floor_room_ranges[current_floor].max_amount_of_card_slots), out card_slots_positions,
-			out room_entrance_positions, out room_sizes, out floor_exit_position);
-			player.initialization = false;
+			out room_entrance_positions, out room_sizes, out floor_exit_position, out amount_of_rooms);
+			player.SetInitialization (false);
 			finished_floor = false;
 			camera.transform.SetParent (transform);
 			camera.transform.position = new Vector3 (0, 0, 0);
@@ -471,7 +472,7 @@ public class GameHandler : MonoBehaviour
 	}
 
 	#endregion
-	#region TImer
+	#region Timer
 
 	public class Timer
 	{
@@ -590,5 +591,65 @@ public class GameHandler : MonoBehaviour
 			this.amount_subtracted = amount_subtracted;
 			this.time_to_subtraction = time_to_subtraction;
 		}
+	}
+
+	public float GetRoomEntrancePosition (int room_index)
+	{
+		 return room_entrance_positions [room_index];
+	}
+
+	public float GetFloorExitPosition ()
+	{
+		return floor_exit_position;
+	}
+
+	public int GetAmountOfRooms ()
+	{
+		return amount_of_rooms;
+	}
+
+	public Enemy GetEnemy (int enemy_index)
+	{
+		return enemies_list [enemy_index];
+	}
+
+	public void RemoveEnemy (int enemy_index)
+	{
+		enemies_list.RemoveAt (enemy_index);
+	}
+
+	public bool GetFighting ()
+	{
+		return fighting;
+	}
+
+	public void SetFinishedEndOfTurnEffects (bool state)
+	{
+		finished_end_of_turn_effect = state;
+	}
+
+	public bool GetActionPhase ()
+	{
+		return action_phase;
+	}
+
+	public void SetActionPhase (bool state)
+	{
+		action_phase = state;
+	}
+
+	public void SetNewRoom (bool state)
+	{
+		new_room = state;
+	}
+
+	public void SetFinishedFloor (bool state)
+	{
+		finished_floor = state;
+	}
+
+	public bool GetPlayerTurn ()
+	{
+		return player_turn;
 	}
 }
