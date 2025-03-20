@@ -88,7 +88,15 @@ public class GameHandler : MonoBehaviour
 		[SerializeField] public float minor_luck_damage_modifier;
 		[SerializeField] public int major_luck_chance;
 		[SerializeField] public float major_luck_damage_modifier;
-
+		[SerializeField] public int minor_derangement_attack_amount_bottom_range;
+		[SerializeField] public int minor_derangement_attack_amount_top_range;
+		[SerializeField] public int minor_derangement_attack_damage_bottom_range;
+		[SerializeField] public int minor_derangement_attack_damage_top_range;
+		[SerializeField] public int major_derangement_attack_amount_bottom_range;
+		[SerializeField] public int major_derangement_attack_amount_top_range;
+		[SerializeField] public int major_derangement_attack_damage_bottom_range;
+		[SerializeField] public int major_derangement_attack_damage_top_range;
+		[SerializeField] public int major_derangement_self_hit_chance;
 	}
 	#endregion
 	#region gameplay options
@@ -289,6 +297,13 @@ public class GameHandler : MonoBehaviour
 	{
 		bleed,
 		poison
+	}
+
+	public enum character_type
+	{
+		player,
+		ai,
+		monster
 	}
 
 	#endregion
